@@ -2,19 +2,25 @@ package com.example.datatelekommapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
+
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText eName;
-    private EditText ePass;
+    private EditText eChannel;
+    private EditText eWriteKey;
     private Button eLogin;
     private TextView eLoginInfo;
+    private Connection myCon;
+
+
 
 
     @Override
@@ -22,25 +28,66 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        eName = findViewById(R.id.etUsername);
-        ePass = findViewById(R.id.etPassword);
+        eChannel = findViewById(R.id.etChannelNr);
+        eWriteKey = findViewById(R.id.etChannelWriteKey);
         eLogin = findViewById(R.id.btnLogin);
         eLoginInfo = findViewById(R.id.btnLogin);
+        myCon = new Connection();
 
-        eLogin.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View view) {
 
-                String inputUser = eName.getText().toString();
-                String inputPass = ePass.getText().toString();
 
-                // Todo: Create more thorough password checking criteria (no spaces etc)
-                if(inputUser.isEmpty() || inputPass.isEmpty()){
-                    Toast.makeText(this, "Please enter a ");
+        eLogin.setOnClickListener(view -> {
+
+            myCon.setChannel(eChannel.getText().toString());
+            myCon.setWriteKey(eWriteKey.getText().toString());
+
+            try {
+                myCon.request('4');
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            if(myCon.getChannel().isEmpty()){
+                Toast.makeText(MainActivity.this, "Please enter a valid user/password", Toast.LENGTH_SHORT).show();
+            }
+
+            else{
+                try {
+                    myCon.setStatus(4,'x');
+                    myCon.auth();
+
+                    while(myCon.getStatus(4) == 'x'){
+                        System.out.println("Waiting...");
+                    }
+
+                    if(!myCon.verify('8',4)){
+
+                        Toast.makeText(MainActivity.this, "Incorrect channel number", Toast.LENGTH_SHORT).show();
+
+                    }
+                    else{
+                        eLoginInfo.setText("Login successful");
+                        Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+
+                        // code to go to new activity
+                        Intent intent = new Intent(MainActivity.this, Homepageactivity.class);
+                        intent.putExtra("writeKey", myCon.getWriteKey());
+                        intent.putExtra("channel", eChannel.getText().toString());
+                        startActivity(intent);
+
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
+
             }
+
         });
     }
+
+
 }
