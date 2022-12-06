@@ -30,7 +30,7 @@ public class Connection implements Serializable {
 
 
         Request request = new Request.Builder()
-                .url("https://api.thingspeak.com/channels/" + getChannel() + "/fields/" + field + ".csv?api_key=" + getWriteKey())
+                .url("https://api.thingspeak.com/channels/" + getChannel() + "/fields/" + field + ".csv?api_key=" + getWriteKey() + "&results=8000")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -102,7 +102,7 @@ public class Connection implements Serializable {
         for (int i = 0; i < toSearch.length(); i++) {
             char c = toSearch.charAt(i);
             char c2 = '!';
-            if (i < toSearch.length() - 1) {
+            if (i < toSearch.length() - 2) {
                 c2 = toSearch.charAt(i + 1);
             }
 
