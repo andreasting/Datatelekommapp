@@ -31,26 +31,26 @@ public class Homepageactivity extends AppCompatActivity {
 
         //Fetches values from last screen for use here
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null){
-        myCon.setWriteKey(bundle.getString("writeKey"));
-        myCon.setChannel(bundle.getString("channel"));
+        if (bundle != null) {
+            myCon.setWriteKey(bundle.getString("writeKey"));
+            myCon.setChannel(bundle.getString("channel"));
         }
 
-       refreshValues();
+        refreshValues();
 
         //Fetches new values and refreshes
-        eRefreshButton.setOnClickListener(view ->{
+        eRefreshButton.setOnClickListener(view -> {
             refreshValues();
             refreshUI();
 
         });
 
-        eAuthButton.setOnClickListener(view ->{
+        eAuthButton.setOnClickListener(view -> {
             // Dummy code so the app doesn't immediately say not successful
             myCon.setLastCode("-100");
             myCon.auth();
 
-            while(myCon.getLastCode().equals("-100")){
+            while (myCon.getLastCode().equals("-100")) {
                 System.out.println("Waiting...");
             }
             System.out.println("Last code:" + myCon.getLastCode());
@@ -58,35 +58,35 @@ public class Homepageactivity extends AppCompatActivity {
             Toast.makeText(Homepageactivity.this, "Authentication code: " + myCon.getLastCode(), Toast.LENGTH_SHORT).show();
 
 
-            });
-        };
+        });
+    }
+
+    ;
 
 
     // Changes the text of a selected textvew
-    protected void fillText(char status, String module,TextView text){
+    protected void fillText(char status, String module, TextView text) {
         text.setText(getMessage(status, module));
     }
 
     // Based on server response - prepares a message to display
-    protected String getMessage(char status, String module){
+    protected String getMessage(char status, String module) {
         String toSend = module + " status: ";
         System.out.println("Module status " + module + " : " + status);
-        if(status == '0'){
+        if (status == '0') {
             toSend += " inactive ";
-        }
-        else if(status == '1'){
+        } else if (status == '1') {
             toSend += " active";
-        }
-        else{
+        } else {
             toSend = "ERROR: COULDN'T FETCH " + module + " STATUS";
         }
         return toSend;
     }
 
     //Refreshes v alues to be on screen
-    protected void refreshValues(){
+    protected void refreshValues() {
 
-        for(int i = 2; i<4; i++){
+        for (int i = 2; i < 4; i++) {
             try {
                 char field = Character.forDigit(i, 10);
                 myCon.request(field);
@@ -99,9 +99,9 @@ public class Homepageactivity extends AppCompatActivity {
     }
 
     //Refreshes the on-screen UI
-    protected void refreshUI(){
-        fillText(myCon.getStatus(2),"RFID",eRFID);
-        fillText(myCon.getStatus(3),"Authenticator", eAuth);
+    protected void refreshUI() {
+        fillText(myCon.getStatus(2), "RFID", eRFID);
+        fillText(myCon.getStatus(3), "Authenticator", eAuth);
         System.out.println(myCon.getStatus(3));
         System.out.println("Refresh status: " + myCon.getStatus(2));
         System.out.println("Refresh status: " + myCon.getStatus(3));

@@ -14,14 +14,12 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 
-public class Connection  {
+public class Connection {
     private final OkHttpClient client = new OkHttpClient();
     private char[] status = new char[5];
     private String channel;
     private String writeKey;
     private String code = "0";
-
-
 
 
     public void request(char field) throws Exception {
@@ -68,7 +66,7 @@ public class Connection  {
     }
 
     //Attempts to authenticate and sets code, if the code is 8, authentication succeeded
-    public void auth(){
+    public void auth() {
 
         // Builds a url to request for authentication. In the thingspeak API, updates can be done
         // with HTTP fetch, which is what is used here
@@ -79,12 +77,11 @@ public class Connection  {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 // Gets and sets the last response code
-                try(ResponseBody ResponseBody = response.body()){
+                try (ResponseBody ResponseBody = response.body()) {
                     code = String.valueOf(response.code());
                     setLastCode(code);
 
                 }
-
 
 
             }
@@ -132,11 +129,13 @@ public class Connection  {
         return (getStatus(i) == compareTo);
     }
 
-    public String getLastCode(){
+    public String getLastCode() {
         return code;
     }
 
-    public void setLastCode(String code){this.code = code;}
+    public void setLastCode(String code) {
+        this.code = code;
+    }
 
     public void setChannel(String channel) {
         this.channel = channel;
@@ -161,8 +160,6 @@ public class Connection  {
     public void setStatus(int index, char status) {
         this.status[index] = status;
     }
-
-
 
 
 }

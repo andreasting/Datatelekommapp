@@ -21,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private Connection myCon;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
         eLogin = findViewById(R.id.btnLogin);
         eLoginInfo = findViewById(R.id.btnLogin);
         myCon = new Connection();
-
-
 
 
         eLogin.setOnClickListener(view -> {
@@ -53,29 +49,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            if(myCon.getChannel().isEmpty()){
+            if (myCon.getChannel().isEmpty()) {
                 Toast.makeText(MainActivity.this, "Please enter a valid user/password", Toast.LENGTH_SHORT).show();
-            }
-
-            else{
+            } else {
                 try {
                     // Sets the status to a dummy variable which is impossible
-                    myCon.setStatus(4,'x');
+                    myCon.setStatus(4, 'x');
                     myCon.auth();
 
                     // Prevent instant error message
-                    while(myCon.getStatus(4) == 'x'){
+                    while (myCon.getStatus(4) == 'x') {
                         System.out.println("Waiting...");
                     }
 
                     // If unexpected response from channel
-                    if(!myCon.verify('8',4)){
+                    if (!myCon.verify('8', 4)) {
 
                         Toast.makeText(MainActivity.this, "Incorrect channel number", Toast.LENGTH_SHORT).show();
 
                     }
                     //Code is correct and the ESP will send a signal out to unlock
-                    else{
+                    else {
                         eLoginInfo.setText("Login successful");
                         Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
 
