@@ -5,18 +5,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 
-public class Connection implements Serializable {
+public class Connection  {
     private final OkHttpClient client = new OkHttpClient();
     private char[] status = new char[5];
     private String channel;
@@ -28,7 +26,7 @@ public class Connection implements Serializable {
 
     public void request(char field) throws Exception {
 
-
+// Prepares and builds a OkHttp3 request
         Request request = new Request.Builder()
                 .url("https://api.thingspeak.com/channels/" + getChannel() + "/fields/" + field + ".csv?api_key=" + getWriteKey() + "&results=8000")
                 .build();
@@ -47,17 +45,18 @@ public class Connection implements Serializable {
                     if (!response.isSuccessful())
                         throw new IOException("Unexpected code " + response);
 
-                    // Processes the CSV response from the server.
-                    String body = responseBody.string();
+                    // Processes the CSV response from the server
+                    String body = responseBody.string() + " end";
                     System.out.println("Body is: " + body);
-                    body += " end ";
                     char gotStatus = getValue(body);
 
+                    // Prints and sets the last status received for the appropriate field
                     System.out.println("Status: " + gotStatus);
                     setStatus(Integer.parseInt(String.valueOf(field)), gotStatus);
                     getStatus(Integer.parseInt(String.valueOf(field)));
                     System.out.println("Field = " + String.valueOf(field));
 
+                    // Shows the status of each field, for debugging
                     for (char c : status) {
                         System.out.println(c);
                     }
@@ -68,22 +67,24 @@ public class Connection implements Serializable {
         });
     }
 
-    //Attempts to authenticate and returns status code
+    //Attempts to authenticate and sets code, if the code is 8, authentication succeeded
     public void auth(){
 
-        // Builds a url to request for. For the thingspeak API, updates can be done with
-        // HTTP fetch, which is what is used here
+        // Builds a url to request for authentication. In the thingspeak API, updates can be done
+        // with HTTP fetch, which is what is used here
         Request request = new Request.Builder()
                 .url("https://api.thingspeak.com/update?api_key=" + writeKey + "&field3=1")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                // Gets and sets the last response code
                 try(ResponseBody ResponseBody = response.body()){
                     code = String.valueOf(response.code());
                     setLastCode(code);
 
                 }
+
 
 
             }
@@ -96,6 +97,8 @@ public class Connection implements Serializable {
         System.out.println("Code = " + code);
     }
 
+
+    // Method to get the current value of a field. Processes the CSV response in string format
     public char getValue(String toSearch) {
 
         char status = '!';
@@ -123,7 +126,6 @@ public class Connection implements Serializable {
 
 
     }
-
 
 
     public boolean verify(char compareTo, int i) {

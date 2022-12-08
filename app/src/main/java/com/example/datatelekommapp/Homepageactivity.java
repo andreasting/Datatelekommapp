@@ -22,11 +22,14 @@ public class Homepageactivity extends AppCompatActivity {
         setContentView(R.layout.activity_homepageactivity);
         myCon = new Connection();
 
+        //Prepares on screen elements
+
         eRFID = findViewById(R.id.textRFID);
         eAuth = findViewById(R.id.textAuthreq);
         eRefreshButton = findViewById(R.id.btnRefresh);
         eAuthButton = findViewById((R.id.btnAuth));
 
+        //Fetches values from last screen for use here
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
         myCon.setWriteKey(bundle.getString("writeKey"));
@@ -35,6 +38,7 @@ public class Homepageactivity extends AppCompatActivity {
 
        refreshValues();
 
+        //Fetches new values and refreshes
         eRefreshButton.setOnClickListener(view ->{
             refreshValues();
             refreshUI();
@@ -58,10 +62,12 @@ public class Homepageactivity extends AppCompatActivity {
         };
 
 
+    // Changes the text of a selected textvew
     protected void fillText(char status, String module,TextView text){
         text.setText(getMessage(status, module));
     }
 
+    // Based on server response - prepares a message to display
     protected String getMessage(char status, String module){
         String toSend = module + " status: ";
         System.out.println("Module status " + module + " : " + status);
@@ -77,6 +83,7 @@ public class Homepageactivity extends AppCompatActivity {
         return toSend;
     }
 
+    //Refreshes v alues to be on screen
     protected void refreshValues(){
 
         for(int i = 2; i<4; i++){
@@ -91,6 +98,7 @@ public class Homepageactivity extends AppCompatActivity {
         }
     }
 
+    //Refreshes the on-screen UI
     protected void refreshUI(){
         fillText(myCon.getStatus(2),"RFID",eRFID);
         fillText(myCon.getStatus(3),"Authenticator", eAuth);
